@@ -1,0 +1,105 @@
+{
+  "code": "handlens",
+  "class": "gemcuttingandjewellery.handlens",
+  "storageFlags": 257,
+  "creativeinventory": {
+    "general": [ "handlens-{baseMaterial}-{baseMaterial}" ],
+    "gemcutting": [ "handlens-{baseMaterial}-{baseMaterial}" ]
+  },
+  "shape": {
+    "base": "item/tools/handlens"
+  },
+  "variantgroups": [
+    {
+      "code": "baseMaterial",
+      "states": [ "brass", "silver", "gold", "electrum", "platinum", "molybdochalkos" ]
+    },
+    {
+      "code": "trimMaterial",
+      "states": [ "brass", "silver", "gold", "electrum", "platinum", "molybdochalkos", "zinc" ]
+    }
+  ],
+  "textures": {
+    "frame": {
+      "base": "game:block/glass/frame"
+    },
+    "body": {
+      "base": "game:block/metal/plate/{baseMaterial}"
+    },
+    "trim": {
+      "base": "game:block/metal/plate/{trimMaterial}"
+    }
+  },
+  "tpOffHandTransform": {
+    "translation": {
+      "x": -0.8,
+      "y": 0,
+      "z": -1.2
+    },
+    "rotation": {
+      "x": -10,
+      "y": 0,
+      "z": -75
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.5
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.8,
+      "y": 0,
+      "z": -0.8
+    },
+    "rotation": {
+      "x": 10,
+      "y": 0,
+      "z": -75
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.5
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 9,
+      "y": -5,
+      "z": 0
+    },
+    "rotation": {
+      "x": 41,
+      "y": 10,
+      "z": 43
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 2
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0.06,
+      "z": 0
+    },
+    "rotation": {
+      "x": 92,
+      "y": 0,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 1.5
+  }
+}

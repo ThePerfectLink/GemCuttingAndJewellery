@@ -1,0 +1,112 @@
+{
+  "code": "facetingtablefull",
+  "class": "gemcuttingandjewellery.facetingtable",
+  "entityclass": "gemcuttingandjewellery.blockentityfacetingtable",
+  "behaviors": [
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "drop": {
+          "type": "block",
+          "code": "facetingtable-{type}-east"
+        }
+      }
+    }
+  ],
+  "attributes": { "handbook": { "exclude": true } },
+  "creativeinventory": {},
+  "variantgroups": [
+    {
+      "code": "type",
+      "states": [ "normal", "whitemarble", "redmarble", "greenmarble" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "blockmaterial": "Wood",
+  //"shapeInventory": { "base": "block/facetingtablemechanism" }
+  "drop": {
+    "type": "block",
+    "code": "facetingtable-{type}-east"
+  },
+
+  "heldTpIdleAnimation": "holdunderarm",
+  "renderpass": "OpaqueNoCull",
+  "resistance": 0.00005,
+  "replaceable": 900,
+  "lightAbsorption": 1,
+  "sidesolid": {
+    "up": true,
+    "all": false
+  },
+  "sideopaque": {
+    "up": true,
+    "all": false
+  },
+  "sounds": {
+    "place": "game:block/planks",
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "walk": "game:walk/wood"
+  },
+  "combustibleProps": {
+    "burnTemperature": 650,
+    "burnDuration": 35
+  },
+  "texturesByType": {
+    "*-whitemarble-*": {
+      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
+      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
+      "bottom": { "base": "game:block/wood/table/normal/bottom" },
+      "legs": { "base": "game:block/wood/table/normal/legs" }
+    },
+    "*-redmarble-*": {
+      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
+      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
+      "bottom": { "base": "game:block/wood/table/normal/bottom" },
+      "legs": { "base": "game:block/wood/table/normal/legs" }
+    },
+    "*-greenmarble-*": {
+      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
+      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
+      "bottom": { "base": "game:block/wood/table/normal/bottom" },
+      "legs": { "base": "game:block/wood/table/normal/legs" }
+    },
+    "*": {
+      "wood": { "base": "game:block/wood/planks/generic" },
+      "sides": { "base": "game:block/wood/table/{type}/sides" },
+      "top": { "base": "game:block/wood/table/{type}/top" },
+      "bottom": { "base": "game:block/wood/table/normal/bottom" },
+      "legs": { "base": "game:block/wood/table/{type}/legs" },
+      "material": { "base": "game:item/resource/plate/lead" }
+    }
+  },
+  "materialDensity": 400,
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.7,
+      "y": -0.6,
+      "z": -0.9
+    },
+    "rotation": {
+      "x": 80,
+      "y": 0,
+      "z": 0
+    },
+    "scale": 0.56
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.08,
+      "y": -0.2,
+      "z": 0.6
+    },
+    "rotation": {
+      "x": 33,
+      "y": 134,
+      "z": -102
+    }
+  }
+}

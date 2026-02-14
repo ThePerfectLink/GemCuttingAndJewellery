@@ -1,0 +1,14 @@
+{
+    "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
+    "type": "Code",
+    "modid": "gemcuttingandjewellery",
+    "name": "GemCuttingAndJewellery",
+    "authors": [
+        "ThePerfectLink"
+    ],
+    "description": "A mod that allows the cutting and setting of gemstones",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": "1.21.0"
+    }
+}

@@ -1,0 +1,306 @@
+{
+  "code": "mediumuncutgem",
+  "class": "gemcuttingandjewellery.uncutgem",
+  "maxstacksize": 64,
+  "creativeinventory": {
+    "general": [ "*" ],
+    "gemcutting": [ "*" ]
+  },
+  "shape": {
+    "base": "item/gems/mediumuncutgem"
+  },
+  "variantgroups": [
+    {
+      "code": "material",
+      "states": [ "amethyst", "aquamarine", "citrine", "corundum", "diamond", "emeral", "emerald", "fluorite", "lapislazuli", "malachite", "olivine", "onyx", "quartz", "ruby", "sapphire", "topaz", "turqoise", "uranium" ]
+    }
+  ],
+  "textures": {
+    "gem": { "base": "game:block/stone/gem/{material}" }
+  },
+  "attributesByType": {
+    "*amethyst": {
+      "name": "Amethyst",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.5,
+        "var": 0.5
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*aquamarine": {
+      "name": "Aquamarine",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.5,
+        "var": 0.5
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*citrine": {
+      "name": "citrine",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*corundum": {
+      "name": "Corundum",
+      "quality": {
+        "dist": "gaussian",
+        "avg": 0.51,
+        "var": 0.49
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*diamond": {
+      "name": "Diamond",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 3.5,
+        "var": 1.5
+      }
+    },
+    "*emeral": {
+      "name": "Beryl",
+      "quality": {
+        "dist": "gaussian",
+        "avg": 0.51,
+        "var": 0.49
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*emerald": {
+      "name": "Emerald",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 10,
+        "var": 4
+      }
+    },
+    "*fluorite": {
+      "name": "Fluorite",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 9,
+        "var": 4
+      }
+    },
+    "*lapislazuli": {
+      "name": "Lapislazuli",
+      "quality": {
+        "dist": "gaussian",
+        "avg": 0.51,
+        "var": 0.49
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*malachite": {
+      "name": "Malachite",
+      "quality": {
+        "dist": "gaussian",
+        "avg": 0.51,
+        "var": 0.49
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*olivine": {
+      "name": "Olivine",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*onyx": {
+      "name": "Onyx",
+      "quality": {
+        "dist": "gaussian",
+        "avg": 0.51,
+        "var": 0.49
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*quartz": {
+      "name": "Quartz",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*ruby": {
+      "name": "Ruby",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "stronginvexp",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*sapphire": {
+      "name": "Sapphire",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.4,
+        "var": 0.6
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*topaz": {
+      "name": "Topaz",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*turqoise": {
+      "name": "Turqoise",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.3,
+        "var": 0.7
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 15,
+        "var": 5
+      }
+    },
+    "*uranium": {
+      "name": "Uranium",
+      "quality": {
+        "dist": "invexp",
+        "avg": 0.5,
+        "var": 0.5
+      },
+      "size": {
+        "dist": "gaussian",
+        "avg": 4,
+        "var": 1
+      }
+    }
+   },
+  "guiTransform": {
+    "translation": {
+      "x": 0,
+      "y": 10,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 6
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.2,
+      "y": 0,
+      "z": -1
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 90
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.5
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 180
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 5
+  }
+}

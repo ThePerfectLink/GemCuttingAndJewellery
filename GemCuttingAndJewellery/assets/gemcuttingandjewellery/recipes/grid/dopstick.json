@@ -1,0 +1,68 @@
+[
+  {
+    "ingredientPattern": "G,S",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "G": {
+        "type": "item",
+        "code": "smalluncutgem-*",
+        "name": "gem"
+      },
+      "S": {
+        "type": "item",
+        "code": "dopstick-*",
+        "name": "metal"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "dopstick-{metal}"
+
+    }
+  },
+  {
+    "ingredientPattern": "G,S",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "G": {
+        "type": "item",
+        "code": "mediumuncutgem-*",
+        "name": "gem"
+      },
+      "S": {
+        "type": "item",
+        "code": "dopstick-*",
+        "name": "metal"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "dopstick-{metal}"
+
+    }
+  },
+  {
+    "ingredientPattern": "G,S",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "G": {
+        "type": "item",
+        "code": "largeuncutgem-*",
+        "name": "gem"
+      },
+      "S": {
+        "type": "item",
+        "code": "dopstick-*",
+        "name": "metal"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "dopstick-{metal}"
+
+    }
+  }
+]

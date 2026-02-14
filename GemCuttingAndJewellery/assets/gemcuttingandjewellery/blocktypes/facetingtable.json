@@ -1,0 +1,97 @@
+{
+  "code": "facetingtable",
+  "class": "gemcuttingandjewellery.mpbasefacetingtable",
+  "entityclass": "gemcuttingandjewellery.blockentityfacetingtable",
+  "behaviors": [
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "drop": {
+          "type": "block",
+          "code": "facetingtable-{type}-east"
+        }
+      }
+    }
+  ],
+  "entityBehaviors": [
+    {
+      "name": "gemcuttingandjewellery.blockentitympbasefacetingtable",
+      "properties": [
+        {
+          "plate": { "code": "plate", "states": "lead" }
+        }
+      ]
+    }
+  ],
+  "creativeinventoryByType": {
+    "*": { "general": [ "*-east" ], "gemcutting": [ "*-east" ] }
+  },
+  "variantgroups": [
+    { "code": "type", "states": [ "normal", "whitemarble", "redmarble", "greenmarble" ] },
+    { "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
+  ],
+  "blockmaterial": "Wood",
+  "shapeInventory": { "base": "block/facetingtablemechanismfull"},
+  "shapebytype": { 
+    "*-north": { "base": "block/facetingtablemechanismhori", "rotateY": 270},
+    "*-east": { "base": "block/facetingtablemechanismhori", "rotateY": 180 },
+    "*-south": { "base": "block/facetingtablemechanismhori", "rotateY": 90 },
+    "*-west": { "base": "block/facetingtablemechanismhori", "rotateY": 0 }
+  },
+  "texturesByType": {
+    "*": {
+      "wood": { "base": "game:block/wood/planks/generic" },
+      "material": { "base": "game:item/resource/plate/lead" }
+    }
+  },
+  "heldTpIdleAnimation": "holdunderarm",
+  "renderpass": "OpaqueNoCull",
+  "replaceable": 900,
+  "resistance": 0.00005,
+  "lightAbsorption": 1,
+  "sidesolid": {
+    "up": true,
+    "all": false
+  },
+  "sideopaque": {
+    "up": true,
+    "all": false
+  },
+  "sounds": {
+    "place": "game:block/planks",
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "walk": "game:walk/wood"
+  },
+  "combustibleProps": {
+    "burnTemperature": 650,
+    "burnDuration": 35
+  },
+
+  "materialDensity": 400,
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.7,
+      "y": -0.6,
+      "z": -0.9
+    },
+    "rotation": {
+      "x": 80,
+      "y": 0,
+      "z": 0
+    },
+    "scale": 0.56
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.08,
+      "y": -0.2,
+      "z": 0.6
+    },
+    "rotation": {
+      "x": 33,
+      "y": 134,
+      "z": -102
+    }
+  }
+}

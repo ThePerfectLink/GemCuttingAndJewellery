@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GemCuttingAndJewellery", "GemCuttingAndJewellery\GemCuttingAndJewellery.csproj", "{BEA4BA71-D58C-4D21-8549-C12C9B284C0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "ZZCakeBuild\CakeBuild.csproj", "{519402BD-C10B-4D3C-A276-7A0F37701C0B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEA4BA71-D58C-4D21-8549-C12C9B284C0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA4BA71-D58C-4D21-8549-C12C9B284C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA4BA71-D58C-4D21-8549-C12C9B284C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEA4BA71-D58C-4D21-8549-C12C9B284C0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{519402BD-C10B-4D3C-A276-7A0F37701C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{519402BD-C10B-4D3C-A276-7A0F37701C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{519402BD-C10B-4D3C-A276-7A0F37701C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{519402BD-C10B-4D3C-A276-7A0F37701C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3365E4A1-97A9-4C5C-B62C-7F1BCBF7D3A4}
+	EndGlobalSection
+EndGlobal
