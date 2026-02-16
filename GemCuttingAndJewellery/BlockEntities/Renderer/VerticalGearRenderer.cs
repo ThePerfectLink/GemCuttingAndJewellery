@@ -13,7 +13,6 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
     internal class VerticalGearRenderer : IRenderer
     {
         public Matrixf ModelMat = new Matrixf();
-        internal bool ShouldRotate;
 
         private ICoreClientAPI api;
         private BlockPos pos;
@@ -35,7 +34,6 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
             api.Event.UnregisterRenderer(this, EnumRenderStage.Opaque);
 
             //meshref.Dispose();
-            meshref = null;
         }
 
         public void OnRenderFrame(float deltaTime, EnumRenderStage stage)

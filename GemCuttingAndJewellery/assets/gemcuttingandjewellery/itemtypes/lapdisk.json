@@ -1,0 +1,71 @@
+{
+  "code": "lapdisk",
+  "class": "gemcuttingandjewellery.lapdisk",
+  "creativeinventory": {
+    "general": [ "*" ],
+    "gemcutting": [ "*" ]
+  },
+  "shape": {
+    "base": "block/facetingtablemechanismvertplate.json"
+  },
+  "variantgroups": [
+    {
+      "code": "material",
+      "states": [ "copper", "tin", "lead", "iron" ]
+    }
+  ],
+  "textures": {
+    "material": {
+      "base": "game:block/metal/plate/{material}"
+    }
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.65,
+      "y": -0.3,
+      "z": 0.4
+    },
+    "rotation": {
+      "x": -90,
+      "y": -1,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.75
+  },
+  "guiTransform": {
+    "translation": {
+      "x": -5,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": -26,
+      "y": -48,
+      "z": -72
+    },
+    "origin": {
+      "x": -0.5,
+      "y": 0,
+      "z": -0.5
+    },
+    "scale": 2
+  },
+  "groundTransform": {
+    "translation": {
+      "x": -0.1,
+      "y": -0.31,
+      "z": 0.5
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "scale": 3.5
+  }
+}

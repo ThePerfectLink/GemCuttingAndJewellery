@@ -16,11 +16,10 @@
   "entityBehaviors": [
     {
       "name": "gemcuttingandjewellery.blockentitympbasefacetingtable",
-      "properties": [
-        {
-          "plate": { "code": "plate", "states": "lead" }
-        }
-      ]
+      "properties": {
+        "plate-materials": [ "lapdisk-lead", "lapdisk-tin", "lapdisk-copper", "lapdisk-iron" ]
+      }
+
     }
   ],
   "creativeinventoryByType": {

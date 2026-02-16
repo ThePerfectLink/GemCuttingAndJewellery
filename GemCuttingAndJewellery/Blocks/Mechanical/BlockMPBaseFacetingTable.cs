@@ -1,4 +1,5 @@
-﻿using GemCuttingAndJewellery.BlockEntities.Mechanical;
+﻿using GemCuttingAndJewellery.BlockEntities;
+using GemCuttingAndJewellery.BlockEntities.Mechanical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,33 +18,32 @@ namespace GemCuttingAndJewellery.Blocks.Mechanical
     internal class BlockMPBaseFacetingTable : BlockMPBase
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {
+        {  
 
-            if (byPlayer.InventoryManager.ActiveHotbarSlot.Empty)
+            var be = world.BlockAccessor.GetBlockEntity(blockSel.Position);
+            var behavior = be?.GetBehavior<BEBehaviorMPBaseFacetingTable>();
+            var entity = be?.Block.GetBlockEntity<BlockEntityFacetingTable>(blockSel);
+
+            if (behavior != null)
             {
-                var be = world.BlockAccessor.GetBlockEntity(blockSel.Position);
-                var behavior = be?.GetBehavior<BEBehaviorMPBaseFacetingTable>();
-
-                if (behavior != null)
+                // Server-side logic
+                if (world.Side == EnumAppSide.Server)
                 {
-                    // Server-side logic
-                    if (world.Side == EnumAppSide.Server)
-                    {
-                        // Do your server-side stuff
-                        behavior.OnPlayerInteract(byPlayer);
+                    // Do your server-side stuff
+                    //behavior.OnPlayerInteract(byPlayer);
+                    entity?.OnInteract(byPlayer,blockSel, world);
 
-                        // Mark dirty to sync to client
-                        be.MarkDirty(true); // true = sync to clients
-                    }
-
-                    // Client-side logic (optional)
-                    if (world.Side == EnumAppSide.Client)
-                    {
-                        // Client-side feedback (sounds, particles, etc.)
-                    }
-
-                    return true; // Handled
+                    // Mark dirty to sync to client
+                    be?.MarkDirty(true); // true = sync to clients
                 }
+
+                // Client-side logic (optional)
+                if (world.Side == EnumAppSide.Client)
+                {
+                    // Client-side feedback (sounds, particles, etc.)
+                }
+
+                return true; // Handled
             }
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
@@ -83,7 +83,7 @@ namespace GemCuttingAndJewellery.Blocks.Mechanical
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
             var mpFt = world.BlockAccessor.GetBlockEntity(pos)?.GetBehavior<BEBehaviorMPBaseFacetingTable>();
-            api.Logger.Debug(mpFt.shouldRenderPlate.ToString());
+
             if (mpFt != null && !BEBehaviorMPAxle.IsAttachedToBlock(world.BlockAccessor, mpFt.Block, pos))
             {
                 foreach (var face in BlockFacing.HORIZONTALS)

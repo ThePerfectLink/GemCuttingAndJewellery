@@ -13,7 +13,9 @@
       }
     }
   ],
-  "attributes": { "handbook": { "exclude": true } },
+  "attributes": {
+    "handbook": { "exclude": true }
+  },
   "creativeinventory": {},
   "variantgroups": [
     {

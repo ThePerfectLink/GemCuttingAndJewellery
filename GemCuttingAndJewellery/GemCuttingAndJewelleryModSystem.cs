@@ -15,6 +15,7 @@ namespace GemCuttingAndJewellery
         {
             base.Start(api);
             api.RegisterItemClass(Mod.Info.ModID + ".dopstick", typeof(Items.ItemDopstick));
+            api.RegisterItemClass(Mod.Info.ModID + ".lapdisk", typeof(Items.ItemLapDisk));
             api.RegisterItemClass(Mod.Info.ModID + ".uncutgem", typeof(Items.ItemUncutGem));
             api.RegisterItemClass(Mod.Info.ModID + ".handlens", typeof(Items.ItemHandLens));
             api.RegisterBlockClass(Mod.Info.ModID + ".facetingtable", typeof(Blocks.BlockFacetingTable));
