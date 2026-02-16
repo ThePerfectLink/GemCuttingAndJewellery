@@ -19,7 +19,9 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
 {
     internal class BEBehaviorMPBaseFacetingTable : BEBehaviorMPBase
     {
-        private Dictionary<string, MeshRef> meshCache => ObjectCacheUtil.GetOrCreate(Api, "plateMesh", () => new Dictionary<string, MeshRef>());
+        // Changed: cache key now includes block code to avoid stale/shared mesh reuse.
+        // Why: a single global key can keep old plate meshes and make visual swaps appear stuck.
+        private Dictionary<string, MeshRef> meshCache => ObjectCacheUtil.GetOrCreate(Api, "plateMesh-" + Block.Code, () => new Dictionary<string, MeshRef>());
 
         private Vec3f center = new Vec3f(0.5f, 0.5f, 0.5f);
         ICoreClientAPI? capi;
@@ -28,7 +30,7 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
         public AssetLocation? facetingtableVert;
         public AssetLocation? facetingtablePlate;
 
-        private string[] materialPossibilities = { "copper" };
+        private string[] materialPossibilities = { "copper", "lead" };
         public string? material;
 
         public bool shouldRenderPlate;
@@ -131,7 +133,8 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
                     capi.Render.UploadMesh(mesh);
                     return mesh;
                 });
-            } else
+            }
+            else
             {
                 return new MeshData();
             }
@@ -144,21 +147,33 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
             }
             foreach (string mat in materialPossibilities)
             {
-                Block block = Api.World.BlockAccessor.GetBlock(Blockentity.Pos);
-                Shape newShape = Api.Assets.TryGet(shapeLoc).ToObject<Shape>().Clone();
+                // Changed: skip already-generated entries.
+                // Why: avoids duplicate mesh uploads and keeps behavior deterministic on reload.
+                if (meshCache.ContainsKey(mat))
+                {
+                    continue;
+                }
 
-                AssetLocation plateMat = new AssetLocation("game", shapeLoc);
+                Shape newShape = Api.Assets.TryGet(facetingtablePlate).ToObject<Shape>().Clone();
 
+                if (newShape == null) return;
+                // Changed: apply plate texture per material before tessellation.
+                // Why: this is what makes each cached mesh visually different.
+                newShape.Textures["material"] = $"game:block/metal/plate/{mat}";
 
-                if (block == null || newShape == null) return;
-                capi!.Logger.Chat($"game:item/resource/plate/{mat}");
-                ShapeTextureSource? shapeTexSrc = new ShapeTextureSource(capi, newShape, $"game:item/resource/plate/{mat}");
-                capi.Tesselator.TesselateShape($"facet-plate-{material}", newShape, out var mesh1, shapeTexSrc);
+                // Changed: tessellate with ShapeTextureSource instead of block texture source.
+                // Why: block-based tessellation can ignore this runtime texture override and render as lead.
+                var texSource = new ShapeTextureSource(capi!, newShape, facetingtablePlate!.ToShortString());
+                capi.Tesselator.TesselateShape($"facetingtable-plate-{mat}", newShape, out var mesh1, texSource);
                 meshCache[mat] = capi.Render.UploadMesh(mesh1);
             }
+
+            if (!meshCache.ContainsKey("vert"))
+            {
             Shape shape = Api.Assets.TryGet(facetingtableVert).ToObject<Shape>();
             capi!.Tesselator.TesselateShape(this.Block, shape, out var mesh2);
             meshCache["vert"] = capi.Render.UploadMesh(mesh2);
+        }
         }
 
         //tesselates mechanism
@@ -213,14 +228,22 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
 
         public void OnPlayerInteract(IPlayer player)
         {
-            // Do something when player interacts
-            // This will be called from the block's OnBlockInteractStart
-            shouldRenderPlate = !shouldRenderPlate;
+            // Changed: server-authoritative interaction handling.
+            // Why: only server should mutate synced block entity state.
+            if (Api.Side != EnumAppSide.Server)
+            {
+                return;
+            }
 
-            if (Api.Side == EnumAppSide.Server && shouldRenderPlate)
+            if (!shouldRenderPlate)
             {
                 int currentIndex = Array.IndexOf(materialPossibilities, material);
                 material = materialPossibilities[(currentIndex + 1) % materialPossibilities.Length];
+
+            if (!shouldRenderPlate)
+            {
+                shouldRenderPlate = true;
+                return;
             }
 
         }
@@ -243,13 +266,22 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
 
             if (worldAccessForResolve.Side == EnumAppSide.Client)
             {
-                //Api.Logger.Debug($"Client sync - material: {meshCache[material].ToString()}, shouldRender: {shouldRenderPlate}");
 
-                if (shouldRenderPlate && plateRenderer == null)
+                if (shouldRenderPlate && (!wasRendered || plateRenderer == null))
                 {
-                    // Create renderer with synced material
-                    Api.Logger.Debug($"Creating plate renderer with material: {material}");
-                    plateRenderer = new PlateRenderer(capi, Blockentity.Pos, meshCache[material], this );
+                    if (material == null || !meshCache.TryGetValue(material, out MeshRef meshRef))
+                    {
+                        meshRef = meshCache["lead"];
+                    }
+                    if (plateRenderer != null)
+                    {
+                        capi!.Event.UnregisterRenderer(plateRenderer, EnumRenderStage.Opaque);
+                        plateRenderer.Dispose();
+                        plateRenderer = null;
+                    } else {
+                        plateRenderer = new PlateRenderer(capi!, Blockentity.Pos, meshRef, this);
+                    }
+
                     capi.Event.RegisterRenderer(plateRenderer, EnumRenderStage.Opaque, "facetplate");
                 }
                 else if (!shouldRenderPlate && plateRenderer != null)
