@@ -8,7 +8,7 @@
       "properties": {
         "drop": {
           "type": "block",
-          "code": "facetingtable-{type}-east"
+          "code": "facetingtable-east"
         }
       }
     }
@@ -18,10 +18,6 @@
   },
   "creativeinventory": {},
   "variantgroups": [
-    {
-      "code": "type",
-      "states": [ "normal", "whitemarble", "redmarble", "greenmarble" ]
-    },
     {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
@@ -36,7 +32,7 @@
 
   "heldTpIdleAnimation": "holdunderarm",
   "renderpass": "OpaqueNoCull",
-  "resistance": 0.00005,
+  "resistance": 1.5,
   "replaceable": 900,
   "lightAbsorption": 1,
   "sidesolid": {
@@ -56,34 +52,6 @@
   "combustibleProps": {
     "burnTemperature": 650,
     "burnDuration": 35
-  },
-  "texturesByType": {
-    "*-whitemarble-*": {
-      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
-      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
-      "bottom": { "base": "game:block/wood/table/normal/bottom" },
-      "legs": { "base": "game:block/wood/table/normal/legs" }
-    },
-    "*-redmarble-*": {
-      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
-      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
-      "bottom": { "base": "game:block/wood/table/normal/bottom" },
-      "legs": { "base": "game:block/wood/table/normal/legs" }
-    },
-    "*-greenmarble-*": {
-      "sides": { "base": "game:block/wood/table/normal/sides-{type}" },
-      "top": { "base": "game:block/stone/polishedrock/{type}-inside" },
-      "bottom": { "base": "game:block/wood/table/normal/bottom" },
-      "legs": { "base": "game:block/wood/table/normal/legs" }
-    },
-    "*": {
-      "wood": { "base": "game:block/wood/planks/generic" },
-      "sides": { "base": "game:block/wood/table/{type}/sides" },
-      "top": { "base": "game:block/wood/table/{type}/top" },
-      "bottom": { "base": "game:block/wood/table/normal/bottom" },
-      "legs": { "base": "game:block/wood/table/{type}/legs" },
-      "material": { "base": "game:item/resource/plate/lead" }
-    }
   },
   "materialDensity": 400,
   "tpHandTransform": {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace GemCuttingAndJewellery.BlockEntities.Renderer
@@ -12,7 +13,7 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
     internal class PlateRenderer : IRenderer
     {
         public Matrixf ModelMat = new Matrixf();
-
+        private AssetLocation[] sound = { new AssetLocation("gemcuttingandjewellery:sounds/grinder1"), new AssetLocation("gemcuttingandjewellery:sounds/grinder2"), new AssetLocation("gemcuttingandjewellery:sounds/grinder3") };
         private ICoreClientAPI api;
         private BlockPos pos;
         MeshRef meshref;
@@ -38,7 +39,6 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
         public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
         {
             if (meshref == null) return;
-            //api.Logger.Debug("rendering plate...");
             IRenderAPI rpi = api.Render;
             Vec3d camPos = api.World.Player.Entity.CameraPos;
 
@@ -50,8 +50,6 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
 
             float[] modifier = table.GetModifiers();
 
-            //api.Logger.Debug(table.isRotationReversed().ToString());
-
             prog.ModelMatrix = ModelMat
                 .Identity()
                 .Translate(pos.X - camPos.X, pos.Y - camPos.Y, pos.Z - camPos.Z)
@@ -62,7 +60,12 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
                 .Translate(-10 / 16f, -0.5f, -0.5f)
                 .Values
             ;
+            if (table.Network !=  null && api.World.Rand.NextDouble() < table.Network.Speed / 10f)
+            {
+                api.World.PlaySoundAt(this.sound[(int)Math.Floor(api.World.Rand.NextDouble()*3)], pos, 0.4375, null, true, table.Network.Speed * table.GearedRatio * 8, table.Network.Speed * table.GearedRatio * 0.2f);
+            }
 
+            
             prog.ViewMatrix = rpi.CameraMatrixOriginf;
             prog.ProjectionMatrix = rpi.CurrentProjectionMatrix;
             rpi.RenderMesh(meshref);

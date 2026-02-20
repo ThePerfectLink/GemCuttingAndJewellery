@@ -18,37 +18,43 @@ namespace GemCuttingAndJewellery.Blocks.Mechanical
     internal class BlockMPBaseFacetingTable : BlockMPBase
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-        {  
-
+        {
             var be = world.BlockAccessor.GetBlockEntity(blockSel.Position);
             var behavior = be?.GetBehavior<BEBehaviorMPBaseFacetingTable>();
             var entity = be?.Block.GetBlockEntity<BlockEntityFacetingTable>(blockSel);
 
-            if (behavior != null)
+            if (behavior != null && entity is BlockEntityFacetingTable)
             {
                 // Server-side logic
                 if (world.Side == EnumAppSide.Server)
                 {
                     // Do your server-side stuff
                     //behavior.OnPlayerInteract(byPlayer);
-                    entity?.OnInteract(byPlayer,blockSel, world);
+                    if(entity.OnInteract(byPlayer,blockSel, world)) 
+                    {
+                        
+                        be?.MarkDirty(true);
+                        return true;
+                    }
 
                     // Mark dirty to sync to client
-                    be?.MarkDirty(true); // true = sync to clients
+                     // true = sync to clients
                 }
 
                 // Client-side logic (optional)
                 if (world.Side == EnumAppSide.Client)
                 {
+                    if (entity.OnInteract(byPlayer, blockSel, world))
+                    {
+                        return true;
+                    }
+                    //return true; //Handled
                     // Client-side feedback (sounds, particles, etc.)
                 }
-
-                return true; // Handled
             }
+            
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
-
-
 
         public override bool HasMechPowerConnectorAt(IWorldAccessor world, BlockPos pos, BlockFacing face)
         {
@@ -66,13 +72,13 @@ namespace GemCuttingAndJewellery.Blocks.Mechanical
             BlockPos OutputBlockPos = blockPos.AddCopy(OutputFace);
             Block nblock = world.BlockAccessor.GetBlock(OutputBlockPos);
             BlockFacing OutputOpposite = OutputFace.Opposite;
-            //api.Logger.Debug("out opposite " + OutputOpposite.ToString());
             if (nblock is IMechanicalPowerBlock block)
             {
                 //determines if power should be given to block once placed.
                 if (block != null && block.HasMechPowerConnectorAt(world, OutputBlockPos, OutputOpposite))
                 {
                     block.DidConnectAt(world, OutputBlockPos, OutputOpposite);
+                    
                     this.WasPlaced(world, blockPos, OutputFace);
                 }
             }

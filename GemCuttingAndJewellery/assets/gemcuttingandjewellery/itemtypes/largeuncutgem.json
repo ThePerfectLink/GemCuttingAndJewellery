@@ -61,7 +61,7 @@
       "size": {
         "dist": "invexp",
         "avg": 20,
-        "var": 10
+        "var": 15
       }
     },
     "*citrine": {
@@ -93,13 +93,13 @@
     "*diamond": {
       "name": "Diamond",
       "quality": {
-        "avg": 0.1,
+        "avg": 0.05,
         "var": 0.9,
         "dist": "strongerinvexp"
       },
       "size": {
-        "avg": 5,
-        "var": 5,
+        "avg": 20,
+        "var": 10,
         "dist": "strongerinvexp"
       }
     },
@@ -125,8 +125,8 @@
       },
       "size": {
         "dist": "invexp",
-        "avg": 14,
-        "var": 15
+        "avg": 20,
+        "var": 12
       }
     },
     "*fluorite": {
@@ -138,8 +138,8 @@
       },
       "size": {
         "dist": "invexp",
-        "avg": 13,
-        "var": 6
+        "avg": 20,
+        "var": 10
       }
     },
     "*lapislazuli": {
@@ -151,7 +151,7 @@
       },
       "size": {
         "dist": "gaussian",
-        "avg": 20,
+        "avg": 40,
         "var": 20
       }
     },
@@ -164,7 +164,7 @@
       },
       "size": {
         "dist": "gaussian",
-        "avg": 20,
+        "avg": 40,
         "var": 20
       }
     },
@@ -262,14 +262,14 @@
     "*uranium": {
       "name": "Uranium",
       "size": {
-        "dist": "stronginvexp",
-        "avg": 5,
-        "var": 5
+        "dist": "strongerinvexp",
+        "avg": 20,
+        "var": 10
       },
       "quality": {
-        "dist": "invexp",
-        "avg": 0.3,
-        "var": 0.7
+        "dist": "strongerinvexp",
+        "avg": 0.1,
+        "var": 0.9
       }
     }
   },

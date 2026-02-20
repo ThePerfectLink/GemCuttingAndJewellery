@@ -1,0 +1,54 @@
+[
+  {
+    "ingredientPattern": "_G_,BGT",
+    "width": 3,
+    "height": 2,
+    "ingredients": {
+      "G": {
+        "type": "item",
+        "code": "game:clearquartz"
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metallamellae-brass"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalbit-*",
+        "name": "trim",
+        "quatity": 4,
+        "allowedVariants": [ "brass", "silver", "gold", "electrum", "platinum", "molybdochalkos", "zinc" ]
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "handlens-{trim}"
+    }
+  },
+  {
+    "ingredientPattern": "_G_,BGT",
+    "width": 3,
+    "height": 2,
+    "ingredients": {
+      "G": {
+        "type": "block",
+        "code": "game:glass-plain"
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metallamellae-brass"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalbit-*",
+        "name": "trim",
+        "quatity": 4,
+        "allowedVariants": [ "brass", "silver", "gold", "electrum", "platinum", "molybdochalkos", "zinc" ]
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "handlens-{trim}"
+    }
+  }
+]

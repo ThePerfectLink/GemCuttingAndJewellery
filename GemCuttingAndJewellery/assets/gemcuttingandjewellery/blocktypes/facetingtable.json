@@ -8,7 +8,7 @@
       "properties": {
         "drop": {
           "type": "block",
-          "code": "facetingtable-{type}-east"
+          "code": "facetingtable-east"
         }
       }
     }
@@ -26,7 +26,6 @@
     "*": { "general": [ "*-east" ], "gemcutting": [ "*-east" ] }
   },
   "variantgroups": [
-    { "code": "type", "states": [ "normal", "whitemarble", "redmarble", "greenmarble" ] },
     { "code": "side", "loadFromProperties": "abstract/horizontalorientation" }
   ],
   "blockmaterial": "Wood",
@@ -46,7 +45,7 @@
   "heldTpIdleAnimation": "holdunderarm",
   "renderpass": "OpaqueNoCull",
   "replaceable": 900,
-  "resistance": 0.00005,
+  "resistance": 1.5,
   "lightAbsorption": 1,
   "sidesolid": {
     "up": true,

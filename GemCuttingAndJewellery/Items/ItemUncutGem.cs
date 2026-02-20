@@ -18,6 +18,31 @@ namespace GemCuttingAndJewellery.Items
 {
     internal class ItemUncutGem : ItemGem
     {
+        public SimpleParticleProperties? grindingParticles;
+        public int[]? GemParticleColors ;
+        protected ICoreClientAPI? capi;
+        public override void OnLoaded(ICoreAPI api)
+        {
+            base.OnLoaded(api);
+            if((capi = api as ICoreClientAPI) != null)
+            {
+                grindingParticles = new SimpleParticleProperties()
+                {
+                    MinQuantity = 0.2f,
+                    MinPos = new Vec3d(0.15, 0, 0.15),
+                    AddPos = new Vec3d(0, 0.01,0),
+                    MinVelocity = new Vec3f(0, 0, 0),
+                    LifeLength = 0.5f,
+                    GravityEffect = 0.75f,
+                    MinSize = 0.04f,
+                    MaxSize = 0.2f,
+                    ParticleModel = EnumParticleModel.Cube
+                };
+                GemParticleColors = capi!.ItemTextureAtlas.GetRandomColors(getOrCreateTexPos(this.Textures["gem"].Base));
+            }
+            
+        }
+
         public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
         {
             if (itemstack.Attributes.HasAttribute("size"))
@@ -40,7 +65,7 @@ namespace GemCuttingAndJewellery.Items
         }
         public override void GetHeldItemInfo(ItemSlot inslot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
-            
+
             if (inslot.Itemstack.Attributes.HasAttribute("quality"))
             {
                 dsc.AppendLine("Quality: " + inslot.Itemstack.Attributes.GetFloat("quality", 0) + "%");
@@ -66,11 +91,11 @@ namespace GemCuttingAndJewellery.Items
         }
         public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
-            if(byEntity.LeftHandItemSlot != null)
+            if (byEntity.LeftHandItemSlot != null)
             {
-                if(byEntity.LeftHandItemSlot.Itemstack != null)
+                if (byEntity.LeftHandItemSlot.Itemstack != null)
                 {
-                    if (byEntity.LeftHandItemSlot.Itemstack.Item is ItemHandLens && 
+                    if (byEntity.LeftHandItemSlot.Itemstack.Item is ItemHandLens &&
                         (!slot.Itemstack.Attributes.HasAttribute("quality") || !slot.Itemstack.Attributes.HasAttribute("size")))
                     {
                         if (secondsUsed > 2)
@@ -99,9 +124,9 @@ namespace GemCuttingAndJewellery.Items
                             takenStack.Attributes.SetFloat("size", (float)Math.Round(itemSize * 100) / 100);
 
                             //Give item back to player or onto the ground
-                            if(!player.Player.InventoryManager.TryGiveItemstack(takenStack)) 
+                            if (!player.Player.InventoryManager.TryGiveItemstack(takenStack))
                                 api.World.SpawnItemEntity(takenStack, player.Pos.XYZ);
-                             
+
                             api.World.PlaySoundAt(new AssetLocation("sounds/player/coin" + (RandomNumberGenerator.GetInt32(6) + 1)), byEntity);
                             return false;
                         }
@@ -109,8 +134,26 @@ namespace GemCuttingAndJewellery.Items
                     return true;
                 }
             }
-            
+
             return base.OnHeldInteractStep(secondsUsed, slot, byEntity, blockSel, entitySel);
+        }
+
+        protected TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
+        {
+            TextureAtlasPosition texpos = capi.BlockTextureAtlas[texturePath];
+
+            if (texpos == null)
+            {
+                bool ok = capi.BlockTextureAtlas.GetOrInsertTexture(texturePath, out _, out texpos);
+
+                if (!ok)
+                {
+                    capi.World.Logger.Warning("For render in fruit tree block " + this.Code + ", defined texture {1}, no such texture found.", texturePath);
+                    return capi.BlockTextureAtlas.UnknownTexturePosition;
+                }
+            }
+
+            return texpos;
         }
         public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {

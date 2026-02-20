@@ -5,6 +5,34 @@
     "general": [ "*" ],
     "gemcutting": [ "*" ]
   },
+  	"attributes": {
+      "rackable": true,
+		  "toolrackTransformByType": {
+        "@lapdisk-(copper|tin|lead|iron)": {
+          "translation": {
+            "x": -0.1,
+            "y": -0.55,
+            "z": -0.2
+          },
+          "rotation": {
+            "x": 0,
+            "y": 24,
+            "z": 0
+          },
+          "origin": {
+            "x": 1,
+            "y": 0,
+            "z": 0.5
+          },
+          "scale": 1.13
+        },
+			  "*": {
+				  "rotation": { "y": 1, "z": -1 },
+				  "translation": { "x": -0.35, "y": 0.6 },
+				  "scale": 1.25
+			  }
+		  }
+	},
   "shape": {
     "base": "block/facetingtablemechanismvertplate.json"
   },

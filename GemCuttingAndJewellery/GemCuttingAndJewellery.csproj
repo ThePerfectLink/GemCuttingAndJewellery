@@ -62,4 +62,9 @@
   </Content>
 </ItemGroup>
 
+<ItemGroup>
+  <Folder Include="assets\gemcuttingandjewellery\sounds\" />
+  <Folder Include="Systems\Microblock\" />
+</ItemGroup>
+
 </Project>

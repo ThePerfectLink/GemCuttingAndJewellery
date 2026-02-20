@@ -34,6 +34,7 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
         public AssetLocation? facetingtableVert;
         public AssetLocation? facetingtablePlate;
 
+
         public bool shouldRender;
         private string[]? materialPossibilities;
         public ItemStack? material;
@@ -41,24 +42,22 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
         protected VerticalGearRenderer? verticalGearRenderer;
         protected PlateRenderer? plateRenderer;
 
-        protected float resistance = 0.005f;
+        protected float resistance = 0.0005f;
         public int animationMult = 1;
         public override float AngleRad => GetAngleRad();
-
-        protected virtual bool AddBase => true;
-
         public override float GetResistance() { return resistance; }
 
-        private float GetAngleRad()
+        float GetAngleRad()
         {
-            if (this.network != null)
+            if (network == null) return lastKnownAngleRad;
+
+            if (isRotationReversed())
             {
-                return this.network.AngleRad;
+                return (lastKnownAngleRad = (GameMath.TWOPI * 2) - (network.AngleRad * this.GearedRatio) % (GameMath.TWOPI * 2));
             }
-            return 0;
+
+            return (lastKnownAngleRad = (network.AngleRad * this.GearedRatio) % (GameMath.TWOPI * 2));
         }
-
-
 
         public override void Initialize(ICoreAPI api, JsonObject properties)
         {
@@ -173,24 +172,17 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
         //tesselates mechanism
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
         {
-            if (this.AddBase)
+            MeshData baseMesh = this.GetBaseMesh()!;
+            if (baseMesh != null) 
             {
-                MeshData baseMesh;
-                if (this.capi != null)
-                {
-                    baseMesh = this.GetBaseMesh()!;
-                    if (baseMesh != null) 
-                    {
-                        baseMesh = this.RotateMesh(baseMesh);
-                        mesher.AddMeshData(baseMesh);
-                        baseMesh.Dispose();
-                    }
-                }
-                else
-                {
-                    Api.World.Logger.Debug("capi is null!");
-                    return false;
-                }
+                baseMesh = this.RotateMesh(baseMesh);
+                mesher.AddMeshData(baseMesh);
+                baseMesh.Dispose();
+            }
+            else
+            {
+                Api.World.Logger.Debug("capi is null!");
+                return false;
             }
             return true;
         }
@@ -296,7 +288,6 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder sb)
         {
             base.GetBlockInfo(forPlayer, sb);
-            var rotation = this.Block.Variant["side"];
             sb.AppendLine(string.Format(Lang.Get("Input: {0}", this.OutFacingForNetworkDiscovery.Code)));
         }
     }

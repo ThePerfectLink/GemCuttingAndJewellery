@@ -44,6 +44,10 @@ public class BlockEntityFacetingTable : BlockEntityContainer
 
         if (handslot.Empty && !LapSlot.Empty)
         {
+            if(Api is ICoreClientAPI)
+            {
+                return true;
+            }
             LapSlot.TryPutInto(Api.World, handslot, 1);
             behavior.shouldRender = false;
             behavior.material = null;
@@ -53,16 +57,20 @@ public class BlockEntityFacetingTable : BlockEntityContainer
         }
         else if (handStack?.Collectible is ItemLapDisk && LapSlot.Empty)
         {
+
+            if (Api is ICoreClientAPI)
+            {
+                world.PlaySoundAt(new AssetLocation("sounds/effect/crusher-impact3"), blockSel.Position, 0.4375, byPlayer, false, 5, 0.4f);
+                return true;
+            }
+            Api.Logger.Debug("empty");
             behavior.material = handStack.Clone();
             behavior.shouldRender = true;
             handslot.TryPutInto(Api.World, LapSlot, quantity: 1);
             MarkDirty();
             return true;
         }
-        else
-        {
-            MarkDirty(true);
-        }
+        
         return false;
     }
 }

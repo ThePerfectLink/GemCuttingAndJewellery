@@ -79,9 +79,9 @@
         "var": 0.2
       },
       "size": {
-        "dist": "gaussian",
-        "avg": 2,
-        "var": 1
+        "dist": "invexp",
+        "avg": 6,
+        "var": 4
       }
     },
     "*emeral": {
@@ -106,8 +106,8 @@
       },
       "size": {
         "dist": "gaussian",
-        "avg": 4,
-        "var": 2
+        "avg": 6,
+        "var": 4
       }
     },
     "*fluorite": {
@@ -119,8 +119,8 @@
       },
       "size": {
         "dist": "gaussian",
-        "avg": 3,
-        "var": 2
+        "avg": 6,
+        "var": 4
       }
     },
     "*lapislazuli": {
@@ -249,8 +249,8 @@
       },
       "size": {
         "dist": "gaussian",
-        "avg": 2,
-        "var": 1
+        "avg": 6,
+        "var": 4
       }
     }
   },
