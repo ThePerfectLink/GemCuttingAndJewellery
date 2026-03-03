@@ -157,7 +157,7 @@ namespace GemCuttingAndJewellery.BlockEntities.Mechanical
                 // Changed: tessellate with ShapeTextureSource instead of block texture source.
                 // Why: block-based tessellation can ignore this runtime texture override and render as lead.
                 var texSource = new ShapeTextureSource(capi!, newShape, facetingtablePlate!.ToShortString());
-                capi!.Tesselator.TesselateShape($"facetingtable-{mat}", newShape, out var mesh1, texSource);
+                capi!.Tesselator.TesselateShape($"facetingtable-{mat}", newShape, out MeshData mesh1, texSource);
                 MeshCache[mat] = capi.Render.UploadMesh(mesh1);
             }
                 

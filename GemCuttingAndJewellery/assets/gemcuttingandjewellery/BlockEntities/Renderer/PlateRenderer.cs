@@ -62,7 +62,7 @@ namespace GemCuttingAndJewellery.BlockEntities.Renderer
             ;
             if (table.Network !=  null && api.World.Rand.NextDouble() < table.Network.Speed / 10f)
             {
-                api.World.PlaySoundAt(this.sound[(int)Math.Floor(api.World.Rand.NextDouble()*3)], pos, 0.4375, null, true, table.Network.Speed * table.GearedRatio * 8, table.Network.Speed * table.GearedRatio * 0.2f);
+                api.World.PlaySoundAt(this.sound[(int)Math.Floor(api.World.Rand.NextDouble()*3)], pos, 0.4375, null, true, table.Network.Speed * table.GearedRatio * 2, table.Network.Speed * table.GearedRatio * 0.2f);
             }
 
             
