@@ -48,6 +48,7 @@ namespace GemCuttingAndJewellery.Items
         {
             base.OnLoaded(api);
             meshCache = ObjectCacheUtil.GetOrCreate(api, "gem-" + this.Code, () => new Dictionary<string, MeshData>());
+            modularMeshCache = ObjectCacheUtil.GetOrCreate(api, "gemModular-" + this.Code, () => new Dictionary<string, ModularMeshData>());
             meshRefCache = ObjectCacheUtil.GetOrCreate(api, "gemRef-" + this.Code, () => new Dictionary<string, MultiTextureMeshRef>());
             meshIndex = ObjectCacheUtil.GetOrCreate(api, "gemIndex-" + this.Code, () => 0);
 
@@ -169,7 +170,7 @@ namespace GemCuttingAndJewellery.Items
             return base.OnHeldInteractStep(secondsUsed, slot, byEntity, blockSel, entitySel);
         }
 
-        protected TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
+        public TextureAtlasPosition getOrCreateTexPos(AssetLocation texturePath)
         {
             TextureAtlasPosition texpos = capi!.BlockTextureAtlas[texturePath];
 
@@ -192,8 +193,7 @@ namespace GemCuttingAndJewellery.Items
             if (!modularMeshCache!.ContainsKey(key))
             {
                 capi!.Tesselator.TesselateItem(this, out MeshData rawMesh);
-                TextureAtlasPosition texPos = getOrCreateTexPos(this.Textures["gem"].Base);
-                modularMeshCache[key] = ModularMeshData.FromMeshData(rawMesh, texPos);
+                modularMeshCache[key] = new ModularMeshData().FromMeshData(rawMesh, getOrCreateTexPos(this.Textures["gem"].Base));
             }
             return modularMeshCache[key];
         }
@@ -205,6 +205,7 @@ namespace GemCuttingAndJewellery.Items
             MeshData compiled = modularMeshCache![key].ToMeshData();
             meshRefCache![key]?.Dispose();
             meshRefCache[key] = capi!.Render.UploadMultiTextureMesh(compiled);
+            meshTest(meshCache![key], compiled);
             meshCache![key] = compiled;
         }
 
@@ -239,6 +240,17 @@ namespace GemCuttingAndJewellery.Items
         //    meshRefCache![gem.Attributes.GetString("shape")].Dispose();
         //    meshRefCache[gem.Attributes.GetString("shape")] = capi!.Render.UploadMultiTextureMesh(meshCache[gem.Attributes.GetString("shape")]);
         //}
+
+        private void meshTest(MeshData first, MeshData second)
+        {
+            for (int i = 0; i < Math.Min(first.Uv.Length, second.Uv.Length); i++)
+            {
+                if (first.Uv[i] != second.Uv[i])
+                {
+                    api.Logger.Debug($"{i}: {first.Uv[i]}, {second.Uv[i]}");
+                }
+            }
+        }
 
 
         public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)

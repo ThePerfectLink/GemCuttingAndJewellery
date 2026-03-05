@@ -6,20 +6,32 @@ using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using static GemCuttingAndJewellery.Systems.ModularMeshData;
 
 namespace GemCuttingAndJewellery.Systems
 {
     public class ModularMeshData
     {
+        public int[]? OriginalTextureIds;
+
         public class Vertex
         {
             public Vec3f Position;
             public List<Face> AdjacentFaces = new();
         }
 
+        public class VertexRenderData
+        {
+            public float U;
+            public float V;
+            public int Flags;
+            public byte TextureIndex;
+        }
+
         public class Face
         {
-            public Vertex[] Vertices; // always 4 (degenerate quad for tris)
+            public Vertex[] Vertices;        // shared geometric vertices for adjacency
+            public VertexRenderData[] RenderData; // per-slot render data, parallel to Vertices
             public Vec3f Normal;
             public TextureAtlasPosition TexPos;
 
@@ -38,37 +50,81 @@ namespace GemCuttingAndJewellery.Systems
         public List<Face> Faces = new();
 
         // Build from existing MeshData after tesselation
-        public static ModularMeshData FromMeshData(MeshData mesh, TextureAtlasPosition texPos)
+        public ModularMeshData FromMeshData(MeshData mesh, TextureAtlasPosition texPos)
         {
             var mod = new ModularMeshData();
+            mod.OriginalTextureIds = mesh.TextureIds;
 
-            // Build vertices
+            var indexToVertex = new Dictionary<int, Vertex>();
+            var positionToVertex = new Dictionary<string, Vertex>();
+
             for (int i = 0; i < mesh.VerticesCount; i++)
-                mod.Vertices.Add(new Vertex { Position = GeometryHelper.GetVertex(mesh, i) });
+            {
+                Vec3f pos = GeometryHelper.GetVertex(mesh, i);
+                string key = $"{pos.X}_{pos.Y}_{pos.Z}";
 
-            // Build faces from index groups of 4
-            for (int i = 0; i < mesh.IndicesCount; i += 6) // 6 indices per quad (2 tris)
+                if (!positionToVertex.ContainsKey(key))
+                {
+                    var vertex = new Vertex { Position = pos };
+                    positionToVertex[key] = vertex;
+                    mod.Vertices.Add(vertex);
+                }
+
+                indexToVertex[i] = positionToVertex[key];
+            }
+
+            for (int i = 0; i < mesh.IndicesCount; i += 6)
             {
                 int i0 = mesh.Indices[i];
                 int i1 = mesh.Indices[i + 1];
                 int i2 = mesh.Indices[i + 2];
-                int i3 = mesh.Indices[i + 4]; // second tri gives us 4th vert
+                int i3 = mesh.Indices[i + 5];
 
                 var face = new Face
                 {
-                    Vertices = new Vertex[]
-                    {
-                    mod.Vertices[i0],
-                    mod.Vertices[i1],
-                    mod.Vertices[i2],
-                    mod.Vertices[i3]
-                    },
+                    Vertices =
+                    [
+                        indexToVertex[i0],
+                        indexToVertex[i1],
+                        indexToVertex[i2],
+                        indexToVertex[i3]
+                    ],
+                    RenderData = 
+                    [
+                        new VertexRenderData
+                        {
+                            U = mesh.Uv[i0 * 2],
+                            V = mesh.Uv[i0 * 2 + 1],
+                            Flags = mesh.Flags != null ? mesh.Flags[i0] : 0,
+                            TextureIndex = mesh.TextureIndices != null ? mesh.TextureIndices[i/6] : (byte)0
+                        },
+                        new VertexRenderData
+                        {
+                            U = mesh.Uv[i1 * 2],
+                            V = mesh.Uv[i1 * 2 + 1],
+                            Flags = mesh.Flags != null ? mesh.Flags[i1] : 0,
+                            TextureIndex = mesh.TextureIndices != null ? mesh.TextureIndices[i/6] : (byte)0
+                        },
+                        new VertexRenderData
+                        {
+                            U = mesh.Uv[i2 * 2],
+                            V = mesh.Uv[i2 * 2 + 1],
+                            Flags = mesh.Flags != null ? mesh.Flags[i2] : 0,
+                            TextureIndex = mesh.TextureIndices != null ? mesh.TextureIndices[i/6] : (byte)0
+                        },
+                        new VertexRenderData
+                        {
+                            U = mesh.Uv[i3 * 2],
+                            V = mesh.Uv[i3 * 2 + 1],
+                            Flags = mesh.Flags != null ? mesh.Flags[i3] : 0,
+                            TextureIndex = mesh.TextureIndices != null ? mesh.TextureIndices[i/6] : (byte)0
+                        }
+                    ],
                     TexPos = texPos
                 };
                 face.RecalculateNormal();
 
-                // Register adjacency
-                foreach (var v in face.Vertices)
+                foreach (var v in face.Vertices.Distinct())
                     v.AdjacentFaces.Add(face);
 
                 mod.Faces.Add(face);
@@ -80,25 +136,35 @@ namespace GemCuttingAndJewellery.Systems
         // Compile back to MeshData for rendering
         public MeshData ToMeshData()
         {
-            MeshData mesh = new MeshData(Vertices.Count, Faces.Count * 6);
+            MeshData mesh = new MeshData(Faces.Count * 4, Faces.Count * 6);
+            mesh.TextureIndices = new byte[Faces.Count]; // one per face, not per vertex
 
-            // Recalculate all normals before compiling
-            foreach (var face in Faces)
-                face.RecalculateNormal();
-
+            int faceIdx = 0;
             foreach (var face in Faces)
             {
                 int baseIndex = mesh.VerticesCount;
-                int encodedNormal = VertexFlags.PackNormal(
-                    face.Normal.X, face.Normal.Y, face.Normal.Z);
 
-                foreach (var v in face.Vertices)
+                for (int i = 0; i < face.Vertices.Length; i++)
                 {
-                    var (u, w) = GeometryHelper.TriplanarUV(v.Position, face.Normal, face.TexPos);
-                    mesh.AddVertex(v.Position.X, v.Position.Y, v.Position.Z, u, w, encodedNormal);
+                    Vertex v = face.Vertices[i];
+                    if(face.RenderData != null)
+                    {
+                        VertexRenderData rd = face.RenderData[i];
+                        int idx = mesh.VerticesCount;
+
+                        mesh.AddVertex(v.Position.X, v.Position.Y, v.Position.Z, rd.U, rd.V, ColorUtil.WhiteArgb);
+                        mesh.Flags[idx] = rd.Flags;
+                    }
+
+                }
+                
+                if (face.RenderData != null)
+                {
+                    mesh.TextureIndices[faceIdx] = face.RenderData[0].TextureIndex;
                 }
 
-                // Quad as two triangles
+                faceIdx++;
+
                 mesh.AddIndex(baseIndex);
                 mesh.AddIndex(baseIndex + 1);
                 mesh.AddIndex(baseIndex + 2);
@@ -107,6 +173,7 @@ namespace GemCuttingAndJewellery.Systems
                 mesh.AddIndex(baseIndex + 3);
             }
 
+            mesh.TextureIds = OriginalTextureIds;
             return mesh;
         }
 
@@ -124,7 +191,13 @@ namespace GemCuttingAndJewellery.Systems
 
         public void AddClipFace(Vertex v0, Vertex v1, Vertex v2, TextureAtlasPosition texPos)
         {
-            // Duplicate v2 as degenerate quad
+            // Calculate UVs for the new face's normal
+            Vec3f normal = GeometryHelper.CalculateQuadNormal(
+                v0.Position, v1.Position, v2.Position, v2.Position);
+
+            // Only set UVs if these are genuinely new vertices without existing UVs
+            // Clip face vertices are references to existing vertices so their UVs are already set
+
             var face = new Face
             {
                 Vertices = new Vertex[] { v0, v1, v2, v2 },
@@ -132,7 +205,7 @@ namespace GemCuttingAndJewellery.Systems
             };
             face.RecalculateNormal();
 
-            foreach (var v in face.Vertices)
+            foreach (var v in face.Vertices.Distinct())
                 v.AdjacentFaces.Add(face);
 
             Faces.Add(face);

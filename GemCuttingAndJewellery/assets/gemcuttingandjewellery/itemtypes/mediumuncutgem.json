@@ -12,7 +12,26 @@
   "variantgroups": [
     {
       "code": "material",
-      "states": [ "amethyst", "aquamarine", "citrine", "corundum", "diamond", "emeral", "emerald", "fluorite", "lapislazuli", "malachite", "olivine", "onyx", "quartz", "ruby", "sapphire", "topaz", "turqoise", "uranium" ]
+      "states": [
+        "amethyst",
+        "aquamarine",
+        "citrine",
+        "corundum",
+        "diamond",
+        "emeral",
+        "emerald",
+        "fluorite",
+        "lapislazuli",
+        "malachite",
+        "olivine",
+        "onyx",
+        "quartz",
+        "ruby",
+        "sapphire",
+        "topaz",
+        "turqoise",
+        "uranium"
+      ]
     }
   ],
   "textures": {

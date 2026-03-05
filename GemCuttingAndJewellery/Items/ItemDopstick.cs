@@ -14,6 +14,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using static GemCuttingAndJewellery.Systems.ModularMeshData;
 
 namespace GemCuttingAndJewellery.Items
 {
@@ -21,7 +22,6 @@ namespace GemCuttingAndJewellery.Items
     {
         private Dictionary<string, MultiTextureMeshRef?> meshCache = new Dictionary<string, MultiTextureMeshRef?>();
         private AssetLocation[] sound = { new AssetLocation("gemcuttingandjewellery:sounds/grind1"), new AssetLocation("gemcuttingandjewellery:sounds/grind2"), new AssetLocation("gemcuttingandjewellery:sounds/grind3") };
-        private Dictionary<string, bool> renderedOnce = new Dictionary<string, bool>();
         public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
         {
             if (itemstack.Attributes.GetItemstack("gem") != null)
@@ -50,12 +50,12 @@ namespace GemCuttingAndJewellery.Items
                     ItemUncutGem? item = gem.Item as ItemUncutGem;
                     MeshData overlayMesh = item!.GetMeshData(gem);
                     //capi.Tesselator.TesselateItem(gem.Item, out overlayMesh, capi.Tesselator.GetTextureSource(gem.Item));
-                    if(!renderedOnce.ContainsKey(cacheKey))
-                    {
+                    //if(!renderedOnce.ContainsKey(cacheKey))
+                    //{
                         float size = (float)(Math.Log(gem.Attributes.GetFloat("size", 1) + 2) / 3);
                         overlayMesh.ModelTransform(new ModelTransform() { Scale = size * 1.5f, Translation = new FastVec3f(0, (size * 1.5f + 3) / 2 - 2, 0) });
-                        renderedOnce[cacheKey] = true;
-                    }
+                        //renderedOnce[cacheKey] = true;
+                    //}
                     combinedMesh.AddMeshData(overlayMesh);
                     meshCache[cacheKey] = capi.Render.UploadMultiTextureMesh(combinedMesh);
                 }
@@ -230,57 +230,106 @@ namespace GemCuttingAndJewellery.Items
             base.OnUnloaded(api);
         }
 
-        public void GrindGem( ItemSlot slot, int vertex)
+        public void GrindGem( ItemSlot slot, int toolMode)
         {
             if (slot.Itemstack.Attributes.GetItemstack("gem") is ItemStack gem && gem.Attributes.GetString("shape") != null)
             {
                 if (gem.Item is not ItemUncutGem item) return;
 
-                if (item != null && vertex % 5 == 0)
+                ModularMeshData modular = item.GetOrCreateModularMesh(gem);
+
+                // toolMode maps to either a face or a corner
+                // Every 5th mode is a face selector, the rest are corners
+                if (toolMode % 5 == 0)
                 {
-                    grindFace(slot, vertex - vertex/5);
-                } else
+                    int faceIndex = toolMode / 5;
+                    if (faceIndex < modular.Faces.Count)
+                        GrindFace(modular, modular.Faces[faceIndex], gem, item);
+                }
+                else
                 {
-                    grindCorner(slot, vertex-vertex/5 - 1, new Vec3f(-0.33f, -0.34f, -0.33f));
+                    // Corner index within the face
+                    int faceIndex = toolMode / 5;
+                    int cornerIndex = (toolMode % 5) - 1;
+                    if (faceIndex < modular.Faces.Count)
+                    {
+                        Face face = modular.Faces[faceIndex];
+                        if (cornerIndex < face.Vertices.Length)
+                            GrindCorner(modular, face.Vertices[cornerIndex], gem, item);
+                    }
+                }
+
+                // Recompile and re-upload the mesh after any grind operation
+                item.RecompileMesh(gem);
+            }
+        }
+
+        public void GrindFace(ModularMeshData modular, ModularMeshData.Face face, ItemStack gem, ItemUncutGem item)
+        {
+            // Move all 4 vertices of the face inward along the face normal
+            foreach (var vertex in face.Vertices.Distinct()) // Distinct avoids moving degenerate dupes twice
+            {
+                vertex.Position -= face.Normal * 0.01f;
+            }
+
+            // Recalculate normals for all affected faces
+            foreach (var vertex in face.Vertices.Distinct())
+                foreach (var adjacentFace in vertex.AdjacentFaces)
+                    adjacentFace.RecalculateNormal();
+        }
+
+        public void GrindCorner(ModularMeshData modular, ModularMeshData.Vertex corner, ItemStack gem, ItemUncutGem item)
+        {
+            // Collect the edge directions away from this corner across all adjacent faces
+            Vec3f averageInward = Vec3f.Zero;
+            foreach (var face in corner.AdjacentFaces)
+            {
+                foreach (var v in face.Vertices.Distinct())
+                {
+                    if (v != corner)
+                    {
+                        Vec3f edge = v.Position - corner.Position;
+                        edge.Normalize();
+                        averageInward += edge;
+                    }
                 }
             }
-        }
+            averageInward.Normalize();
 
-        public void grindFace(ItemSlot slot, int vertex)
-        {
-            ItemStack gem = slot.Itemstack.Attributes.GetItemstack("gem");
-            ItemUncutGem? item = gem.Item as ItemUncutGem;
-            Vec3f[] vertices =  new Vec3f[4];
-            for (int i = 0; i < 4; i++)
-            {
-                vertices[i] = GeometryHelper.GetVertex(item.GetMeshData(gem), vertex + i);
-            }
-            Vec3f normal = GeometryHelper.CalculateQuadNormal(vertices[0], vertices[1], vertices[2], vertices[3]);
+            // Move the corner inward
+            corner.Position += averageInward * 0.01f;
 
-            if ( item != null)
-            {
-                grindCorner(slot, vertex, normal);
-                grindCorner(slot, vertex + 1, normal);
-                grindCorner(slot, vertex + 2, normal);
-                grindCorner(slot, vertex + 3, normal);
-            }
-        }
+            // Recalculate normals for all faces touching this corner
+            foreach (var face in corner.AdjacentFaces)
+                face.RecalculateNormal();
 
-        public void grindCorner(ItemSlot slot, int vertex, Vec3f direction)
-        {
-            ItemStack gem = slot.Itemstack.Attributes.GetItemstack("gem");
-            ItemUncutGem? item = gem.Item as ItemUncutGem;
-            int[]? vertIndexes = GeometryHelper.GetOverlappingVertices(vertex);
-            int e = 50;
-            if (item != null && vertIndexes is not null)
+            // Add or update the clipping triangle face
+            // Get the 3 unique corners of the clip face — one from each adjacent face
+            var clipVertices = corner.AdjacentFaces
+                .Select(f => f.Vertices.Distinct().FirstOrDefault(v => v != corner))
+                .Where(v => v != null)
+                .Distinct()
+                .Take(3)
+                .ToList();
+
+            if (clipVertices.Count == 3)
             {
-                foreach (int i in vertIndexes)
+                // Check if a clip face already exists for this corner
+                // A clip face is one whose vertices are all adjacent to this corner's faces
+                // but don't include the corner itself
+                var existingClip = modular.Faces.FirstOrDefault(f =>
+                    f.Vertices.Distinct().All(v => clipVertices.Contains(v)));
+
+                if (existingClip != null)
                 {
-
-                    Vec3f vert = GeometryHelper.GetVertex(item.GetMeshData(gem), i);
-                    
-                    Vec3f AlteredVert = GeometryHelper.AlterVertex(direction*0.01f, vert, Operator.Add);
-                    GeometryHelper.SetVertex(item.GetMeshData(gem), i, AlteredVert);
+                    // Just update — vertices are already references so positions are live
+                    existingClip.RecalculateNormal();
+                }
+                else
+                {
+                    TextureAtlasPosition texPos = item.getOrCreateTexPos(item.Textures["gem"].Base);
+                    api.Logger.Debug($"{gem.Item.Code}: {texPos}");
+                    modular.AddClipFace(clipVertices[0]!, clipVertices[1]!, clipVertices[2]!, texPos);
                 }
             }
         }
@@ -296,44 +345,42 @@ namespace GemCuttingAndJewellery.Items
 
         public override SkillItem[] GetToolModes(ItemSlot slot, IClientPlayer forPlayer, BlockSelection blockSel)
         {
-            if (slot.Itemstack.Attributes.GetItemstack("gem") is ItemStack gem && gem.Attributes.GetString("shape") != null)
+            if (slot.Itemstack.Attributes.GetItemstack("gem") is not ItemStack gem
+                || gem.Attributes.GetString("shape") == null)
+                return base.GetToolModes(slot, forPlayer, blockSel);
+
+            if (gem.Item is not ItemUncutGem item)
+                return base.GetToolModes(slot, forPlayer, blockSel);
+
+            ModularMeshData modular = item.GetOrCreateModularMesh(gem);
+
+            // 1 face selector + 4 corner selectors per face
+            SkillItem[] modes = new SkillItem[modular.Faces.Count * 5];
+
+            for (int f = 0; f < modular.Faces.Count; f++)
             {
-                ItemUncutGem? item = gem.Item as ItemUncutGem;
-                if (item != null)
+                Face face = modular.Faces[f];
+                int baseMode = f * 5;
+
+                modes[baseMode] = new SkillItem()
                 {
-                    //api.Logger.Debug($"X = {item.GetMeshData(gem).xyz[3 * 0]}, Y = {item.GetMeshData(gem).xyz[3 * 0 + 1]}, Z = {item.GetMeshData(gem).xyz[3 * 0 + 1]}");
-                    //modes[0] = new SkillItem() { Name = "Grinding" };
-                    //modes[1] = new SkillItem() { Name = "Selection" };
+                    Linebreak = true,
+                    Enabled = true,
+                    Name = $"Face {f} (Normal: {face.Normal.X:F2}, {face.Normal.Y:F2}, {face.Normal.Z:F2})"
+                };
 
-                    SkillItem[] modes = new SkillItem[item.GetMeshData(gem).VerticesCount + item.GetMeshData(gem).VerticesCount/4];
-
-                    for (int i = 0; i < modes.Count(); i++)
+                for (int c = 0; c < 4; c++)
+                {
+                    Vec3f pos = face.Vertices[c].Position;
+                    modes[baseMode + 1 + c] = new SkillItem()
                     {
-                        if (i % 5 == 0)
-                        {
-                            modes[i] = new SkillItem()
-                            {
-                                //Code = new AssetLocation("self"),
-                                Linebreak = true,
-                                Enabled = false,
-                                Name = $"Face: {i / 5}"
-                            };
-                        }
-                        else
-                        {
-                            modes[i] = new SkillItem()
-                            {
-                                //Code = new AssetLocation("self"),
-                                //Linebreak = true,
-                                Enabled = false,
-                                Name = $"Point: X = {item.GetMeshData(gem).xyz[3 * (i-i/5)]}, Y = {item.GetMeshData(gem).xyz[3 * (i - i / 5) + 1]}, Z = {item.GetMeshData(gem).xyz[3 * (i - i / 5) + 2]}"
-                            };
-                        }
-                    }
-                    return modes;
+                        Enabled = true,
+                        Name = $"Corner {c}: ({pos.X:F2}, {pos.Y:F2}, {pos.Z:F2})"
+                    };
                 }
             }
-            return base.GetToolModes(slot, forPlayer, blockSel);
+
+            return modes;
         }
     }
 }

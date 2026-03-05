@@ -1,22 +1,13 @@
-﻿using Cairo;
-using GemCuttingAndJewellery.BlockEntities.Renderer;
-using GemCuttingAndJewellery.Items;
+﻿using GemCuttingAndJewellery.BlockEntities.Renderer;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Numerics;
-using System.Reflection.Emit;
 using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.Client.NoObf;
-using Vintagestory.GameContent;
 using Vintagestory.GameContent.Mechanics;
 
 namespace GemCuttingAndJewellery.BlockEntities.Mechanical
